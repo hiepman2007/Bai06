@@ -1,0 +1,39 @@
+name: Java CI with Maven (Caching)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout source code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Setup Java + bật Maven cache
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: 'maven'
+
+      # 3. Verify cache (optional - giúp bạn thấy log rõ hơn)
+      - name: Show Maven version
+        run: mvn -version
+
+      # 4. Build project (skip test nếu muốn nhanh hơn)
+      - name: Build with Maven
+        run: mvn -B clean install
+
+      # 5. (Optional) Upload artifact
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-app
+          path: target/*.jar
